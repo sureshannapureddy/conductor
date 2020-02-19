@@ -557,6 +557,7 @@ public abstract class AbstractProtoMapper {
             to.setIsolationGroupId( from.getIsolationGroupId() );
         }
         to.setIteration( from.getIteration() );
+        to.putAllVariables( from.getVariables() );
         return to.build();
     }
 
@@ -614,6 +615,25 @@ public abstract class AbstractProtoMapper {
         to.setExecutionNameSpace( from.getExecutionNameSpace() );
         to.setIsolationGroupId( from.getIsolationGroupId() );
         to.setIteration( from.getIteration() );
+        to.setVariables( from.getVariablesMap() );
+        return to;
+    }
+
+    public TaskPb.Task.Variables toProto(Task.Variables from) {
+        TaskPb.Task.Variables to;
+        switch (from) {
+            case SUB_WORKFLOW_ID: to = TaskPb.Task.Variables.SUB_WORKFLOW_ID; break;
+            default: throw new IllegalArgumentException("Unexpected enum constant: " + from);
+        }
+        return to;
+    }
+
+    public Task.Variables fromProto(TaskPb.Task.Variables from) {
+        Task.Variables to;
+        switch (from) {
+            case SUB_WORKFLOW_ID: to = Task.Variables.SUB_WORKFLOW_ID; break;
+            default: throw new IllegalArgumentException("Unexpected enum constant: " + from);
+        }
         return to;
     }
 
@@ -803,6 +823,7 @@ public abstract class AbstractProtoMapper {
         if (from.getOutputMessage() != null) {
             to.setOutputMessage( toProto( from.getOutputMessage() ) );
         }
+        to.putAllVariables( from.getVariables() );
         return to.build();
     }
 
@@ -822,6 +843,7 @@ public abstract class AbstractProtoMapper {
         if (from.hasOutputMessage()) {
             to.setOutputMessage( fromProto( from.getOutputMessage() ) );
         }
+        to.setVariables( from.getVariablesMap() );
         return to;
     }
 

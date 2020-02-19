@@ -65,6 +65,9 @@ public class TaskResult {
     @ProtoField(id = 8)
     private Any outputMessage;
 
+    @ProtoField(id = 9)
+    private Map<Task.Variables, String> variables = new HashMap<>();
+
     private List<TaskExecLog> logs = new CopyOnWriteArrayList<>();
 
     private String externalOutputPayloadStoragePath;
@@ -77,6 +80,7 @@ public class TaskResult {
         this.workerId = task.getWorkerId();
         this.outputData = task.getOutputData();
         this.externalOutputPayloadStoragePath = task.getExternalOutputPayloadStoragePath();
+        this.variables = task.getVariables();
         switch (task.getStatus()) {
             case CANCELED:
             case COMPLETED_WITH_ERRORS:
@@ -238,6 +242,14 @@ public class TaskResult {
      */
     public void setExternalOutputPayloadStoragePath(String externalOutputPayloadStoragePath) {
         this.externalOutputPayloadStoragePath = externalOutputPayloadStoragePath;
+    }
+
+    public Map<Task.Variables, String> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map<Task.Variables, String> variables) {
+        this.variables = variables;
     }
 
     @Override

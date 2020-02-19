@@ -68,6 +68,11 @@ public class Task {
         }
     }
 
+    @ProtoEnum
+    public enum Variables {
+        SUB_WORKFLOW_ID
+    }
+
     @ProtoField(id = 1)
     private String taskType;
 
@@ -188,7 +193,7 @@ public class Task {
 
     @ProtoField(id = 36)
     private int workflowPriority;
-    
+
     @ProtoField(id = 37)
     private String  executionNameSpace;
 
@@ -197,6 +202,9 @@ public class Task {
 
     @ProtoField(id = 40)
     private int iteration;
+
+    @ProtoField(id = 41)
+    private Map<Variables, String> variables = new HashMap<>();
 
     public Task() {
     }
@@ -730,6 +738,15 @@ public class Task {
     public void setWorkflowPriority(int workflowPriority) {
         this.workflowPriority = workflowPriority;
     }
+
+    public Map<Variables, String> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map<Variables, String> variables) {
+        this.variables = variables;
+    }
+
 
     public Task copy() {
         Task copy = new Task();
