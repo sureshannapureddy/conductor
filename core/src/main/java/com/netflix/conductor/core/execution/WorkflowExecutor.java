@@ -635,7 +635,7 @@ public class WorkflowExecutor {
         LOGGER.debug("Completed workflow execution for {}", workflow.getWorkflowId());
 
         // If the following task, for some reason fails, the sweep will take care of this again!
-        if (workflow.getParentWorkflowId() != null) {
+        if (StringUtils.isNotEmpty(workflow.getParentWorkflowId())) {
             Workflow parent = executionDAOFacade.getWorkflowById(workflow.getParentWorkflowId(), false);
             WorkflowDef parentDef = Optional.ofNullable(parent.getWorkflowDefinition())
                     .orElseGet(() -> metadataDAO.getWorkflowDef(parent.getWorkflowName(), parent.getWorkflowVersion())
