@@ -21,7 +21,6 @@ import static com.netflix.conductor.common.metadata.tasks.Task.Status.FAILED;
 import static com.netflix.conductor.common.metadata.tasks.Task.Status.IN_PROGRESS;
 import static com.netflix.conductor.common.metadata.tasks.Task.Status.SCHEDULED;
 import static com.netflix.conductor.common.metadata.tasks.Task.Status.TIMED_OUT;
-import static com.netflix.conductor.common.metadata.tasks.Task.Variables.SUB_WORKFLOW_ID;
 import static com.netflix.conductor.common.metadata.workflow.TaskType.DECISION;
 import static com.netflix.conductor.common.metadata.workflow.TaskType.SUB_WORKFLOW;
 import static com.netflix.conductor.common.run.Workflow.WorkflowStatus.RUNNING;
@@ -1983,13 +1982,13 @@ public abstract class AbstractWorkflowServiceTest {
 
         workflow = workflowExecutionService.getExecutionStatus(workflowId, true);
 
-        String subWorkflowId1 = workflow.getTasks().get(1).getVariables().get(SUB_WORKFLOW_ID);
+        String subWorkflowId1 = workflow.getTasks().get(1).getSubWorkflowId();
         Workflow subWorkflow1 = workflowExecutionService.getExecutionStatus(subWorkflowId1, true);
         assertNotNull(subWorkflow1);
         assertEquals(RUNNING, subWorkflow1.getStatus());
         assertEquals(1, subWorkflow1.getTasks().size());
 
-        String subWorkflowId2 = workflow.getTasks().get(2).getVariables().get(SUB_WORKFLOW_ID);
+        String subWorkflowId2 = workflow.getTasks().get(2).getSubWorkflowId();
         Workflow subWorkflow2 = workflowExecutionService.getExecutionStatus(subWorkflowId2, true);
         assertNotNull(subWorkflow2);
         assertEquals(RUNNING, subWorkflow2.getStatus());
@@ -2240,7 +2239,7 @@ public abstract class AbstractWorkflowServiceTest {
 
         workflow = workflowExecutionService.getExecutionStatus(workflowId, true);
 
-        String level1SubWorkflowId = workflow.getTasks().get(0).getVariables().get(SUB_WORKFLOW_ID);
+        String level1SubWorkflowId = workflow.getTasks().get(0).getSubWorkflowId();
         Workflow level1SubWorkflow = workflowExecutionService.getExecutionStatus(level1SubWorkflowId, true);
         assertNotNull(level1SubWorkflow);
         assertEquals(RUNNING, level1SubWorkflow.getStatus());
@@ -2251,7 +2250,7 @@ public abstract class AbstractWorkflowServiceTest {
 
         level1SubWorkflow = workflowExecutionService.getExecutionStatus(level1SubWorkflowId, true);
 
-        String level2SubWorkflowId = level1SubWorkflow.getTasks().get(0).getVariables().get(SUB_WORKFLOW_ID);
+        String level2SubWorkflowId = level1SubWorkflow.getTasks().get(0).getSubWorkflowId();
         Workflow level2SubWorkflow = workflowExecutionService.getExecutionStatus(level2SubWorkflowId, true);
         assertNotNull(level2SubWorkflow);
         assertEquals(RUNNING, level2SubWorkflow.getStatus());
@@ -2262,7 +2261,7 @@ public abstract class AbstractWorkflowServiceTest {
 
         level2SubWorkflow = workflowExecutionService.getExecutionStatus(level2SubWorkflowId, true);
 
-        String level3SubWorkflowId = level2SubWorkflow.getTasks().get(0).getVariables().get(SUB_WORKFLOW_ID);
+        String level3SubWorkflowId = level2SubWorkflow.getTasks().get(0).getSubWorkflowId();
         Workflow level3SubWorkflow = workflowExecutionService.getExecutionStatus(level3SubWorkflowId, true);
         assertNotNull(level3SubWorkflow);
         assertEquals(RUNNING, level3SubWorkflow.getStatus());
@@ -2387,7 +2386,7 @@ public abstract class AbstractWorkflowServiceTest {
         String subWorkflowId = null;
         for (Task task : workflow.getTasks()) {
             if (task.getTaskType().equalsIgnoreCase(SubWorkflow.NAME)) {
-                subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+                subWorkflowId = task.getSubWorkflowId();
             }
         }
         assertNotNull(subWorkflowId);
@@ -4458,10 +4457,10 @@ public abstract class AbstractWorkflowServiceTest {
         assertNotNull(subWorkflowTask);
         assertNotNull(subWorkflowTask.getOutputData());
         assertNotNull(subWorkflowTask.getInputData());
-        assertNotNull("Output: " + subWorkflowTask.getVariables() + ", status: " + subWorkflowTask.getStatus(), subWorkflowTask.getVariables().get(SUB_WORKFLOW_ID));
+        assertNotNull("Output: " + subWorkflowTask.getSubWorkflowId() + ", status: " + subWorkflowTask.getStatus(), subWorkflowTask.getSubWorkflowId());
         assertTrue(subWorkflowTask.getInputData().containsKey("workflowInput"));
         assertEquals(42, ((Map<String, Object>) subWorkflowTask.getInputData().get("workflowInput")).get("param2"));
-        String subWorkflowId = subWorkflowTask.getVariables().get(SUB_WORKFLOW_ID);
+        String subWorkflowId = subWorkflowTask.getSubWorkflowId();
 
         workflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(workflow);
@@ -4543,8 +4542,8 @@ public abstract class AbstractWorkflowServiceTest {
         task = workflow.getTasks().stream().filter(t -> t.getTaskType().equals(SUB_WORKFLOW.name())).findAny().get();
         assertNotNull(task);
         assertNotNull(task.getOutputData());
-        assertNotNull(task.getVariables().get(SUB_WORKFLOW_ID));
-        String subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+        assertNotNull(task.getSubWorkflowId());
+        String subWorkflowId = task.getSubWorkflowId();
 
         Workflow subWorkflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(subWorkflow);
@@ -4610,8 +4609,8 @@ public abstract class AbstractWorkflowServiceTest {
         task = workflow.getTasks().stream().filter(t -> t.getTaskType().equals(SUB_WORKFLOW.name())).findAny().get();
         assertNotNull(task);
         assertNotNull(task.getOutputData());
-        assertNotNull(task.getVariables().get(SUB_WORKFLOW_ID));
-        String subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+        assertNotNull(task.getSubWorkflowId());
+        String subWorkflowId = task.getSubWorkflowId();
 
         workflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(workflow);
@@ -4672,8 +4671,8 @@ public abstract class AbstractWorkflowServiceTest {
         task = workflow.getTasks().stream().filter(t -> t.getTaskType().equals(SUB_WORKFLOW.name())).findAny().orElse(null);
         assertNotNull(task);
         assertNotNull(task.getOutputData());
-        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getVariables().get(SUB_WORKFLOW_ID));
-        String subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getSubWorkflowId());
+        String subWorkflowId = task.getSubWorkflowId();
 
         workflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(workflow);
@@ -5895,11 +5894,11 @@ public abstract class AbstractWorkflowServiceTest {
         task = workflow.getTasks().stream().filter(t -> t.getTaskType().equals(SUB_WORKFLOW.name())).findAny().get();
         assertNotNull(task);
         assertNotNull(task.getOutputData());
-        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getVariables().get(SUB_WORKFLOW_ID));
+        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getSubWorkflowId());
         assertNotNull(task.getInputData());
         assertTrue(task.getInputData().containsKey("workflowInput"));
         assertEquals(42, ((Map<String, Object>) task.getInputData().get("workflowInput")).get("param2"));
-        String subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+        String subWorkflowId = task.getSubWorkflowId();
 
         Workflow subWorkflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(subWorkflow);
@@ -5978,11 +5977,11 @@ public abstract class AbstractWorkflowServiceTest {
         task = workflow.getTasks().stream().filter(t -> t.getTaskType().equals(SUB_WORKFLOW.name())).findAny().get();
         assertNotNull(task);
         assertNotNull(task.getOutputData());
-        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getVariables().get(SUB_WORKFLOW_ID));
+        assertNotNull("Output: " + task.getOutputData().toString() + ", status: " + task.getStatus(), task.getSubWorkflowId());
         assertNotNull(task.getInputData());
         assertTrue(task.getInputData().containsKey("workflowInput"));
         assertEquals(42, ((Map<String, Object>) task.getInputData().get("workflowInput")).get("param2"));
-        String subWorkflowId = task.getVariables().get(SUB_WORKFLOW_ID);
+        String subWorkflowId = task.getSubWorkflowId();
 
         Workflow subWorkflow = workflowExecutionService.getExecutionStatus(subWorkflowId, true);
         assertNotNull(subWorkflow);
@@ -6528,7 +6527,7 @@ public abstract class AbstractWorkflowServiceTest {
         String subWorkflowId = null;
         for (Task t : workflow.getTasks()) {
             if (t.getTaskType().equalsIgnoreCase("SUB_WORKFLOW")) {
-                subWorkflowId = t.getVariables().get(SUB_WORKFLOW_ID);
+                subWorkflowId = t.getSubWorkflowId();
             }
         }
         assertNotNull(subWorkflowId);

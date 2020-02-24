@@ -822,7 +822,7 @@ public class WorkflowExecutor {
         task.setWorkerId(taskResult.getWorkerId());
         task.setCallbackAfterSeconds(taskResult.getCallbackAfterSeconds());
         task.setOutputData(taskResult.getOutputData());
-        task.setVariables(taskResult.getVariables());
+        task.setSubWorkflowId(taskResult.getSubWorkflowId());
 
         if (task.getOutputData() != null) {
             deciderService.externalizeTaskData(task);
@@ -1388,7 +1388,7 @@ public class WorkflowExecutor {
             createdTasks.forEach(task -> new RetryUtil<>().retryOnException(() ->
             {
                 if (task.getTaskType().equals(SUB_WORKFLOW.name())) {
-                    executionDAOFacade.removeWorkflow(task.getVariables().get(Task.Variables.SUB_WORKFLOW_ID), false);
+                    executionDAOFacade.removeWorkflow(task.getSubWorkflowId(), false);
                 }
                 executionDAOFacade.removeTask(task.getTaskId());
                 return null;
@@ -1459,7 +1459,7 @@ public class WorkflowExecutor {
             } else {
                 // If not found look into sub workflows
                 if (task.getTaskType().equalsIgnoreCase(SubWorkflow.NAME)) {
-                    String subWorkflowId = task.getVariables().get(Task.Variables.SUB_WORKFLOW_ID);
+                    String subWorkflowId = task.getSubWorkflowId();
                     if (rerunWF(subWorkflowId, taskId, taskInput, null, null)) {
                         rerunFromTask = task;
                         break;

@@ -65,12 +65,11 @@ public class TaskResult {
     @ProtoField(id = 8)
     private Any outputMessage;
 
-    @ProtoField(id = 9)
-    private Map<Task.Variables, String> variables = new HashMap<>();
-
     private List<TaskExecLog> logs = new CopyOnWriteArrayList<>();
 
     private String externalOutputPayloadStoragePath;
+
+    private String subWorkflowId;
 
     public TaskResult(Task task) {
         this.workflowInstanceId = task.getWorkflowInstanceId();
@@ -80,7 +79,7 @@ public class TaskResult {
         this.workerId = task.getWorkerId();
         this.outputData = task.getOutputData();
         this.externalOutputPayloadStoragePath = task.getExternalOutputPayloadStoragePath();
-        this.variables = task.getVariables();
+        this.subWorkflowId = task.getSubWorkflowId();
         switch (task.getStatus()) {
             case CANCELED:
             case COMPLETED_WITH_ERRORS:
@@ -244,12 +243,12 @@ public class TaskResult {
         this.externalOutputPayloadStoragePath = externalOutputPayloadStoragePath;
     }
 
-    public Map<Task.Variables, String> getVariables() {
-        return variables;
+    public String getSubWorkflowId() {
+        return subWorkflowId;
     }
 
-    public void setVariables(Map<Task.Variables, String> variables) {
-        this.variables = variables;
+    public void setSubWorkflowId(String subWorkflowId) {
+        this.subWorkflowId = subWorkflowId;
     }
 
     @Override

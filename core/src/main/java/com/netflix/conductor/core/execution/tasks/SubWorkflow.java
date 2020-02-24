@@ -65,7 +65,7 @@ public class SubWorkflow extends WorkflowSystemTask {
 		try {
 			String subWorkflowId = provider.startWorkflow(name, version, wfInput, null, correlationId, workflow.getWorkflowId(), task.getTaskId(), null, taskToDomain);
 
-            task.getVariables().put(Task.Variables.SUB_WORKFLOW_ID, subWorkflowId);
+            task.setSubWorkflowId(subWorkflowId);
 
 			// Set task status based on current sub-workflow status, as the status can change in recursion by the time we update here.
 			Workflow subWorkflow = provider.getWorkflow(subWorkflowId, false);
@@ -94,7 +94,7 @@ public class SubWorkflow extends WorkflowSystemTask {
 
 	@Override
 	public boolean execute(Workflow workflow, Task task, WorkflowExecutor provider) {
-		String workflowId = task.getVariables().get(Task.Variables.SUB_WORKFLOW_ID);
+		String workflowId = task.getSubWorkflowId();
 		if(StringUtils.isEmpty(workflowId)) {
 			return false;
 		}
@@ -120,7 +120,7 @@ public class SubWorkflow extends WorkflowSystemTask {
 
 	@Override
 	public void cancel(Workflow workflow, Task task, WorkflowExecutor provider) {
-		String workflowId = task.getVariables().get(Task.Variables.SUB_WORKFLOW_ID);
+		String workflowId = task.getSubWorkflowId();
 		if(StringUtils.isEmpty(workflowId)) {
 			return;
 		}
